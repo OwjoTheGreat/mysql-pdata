@@ -1,11 +1,23 @@
 if !SERVER then return end
 
+--[[
+    // LOAD REQUIREMENTS
+]]--
+-- Load the mySQLoo library
 require("mysqloo")
-
+-- Define the connection var
 MySQLData.CONN = MySQLData.CONN || nil
-
+-- Define the player metaobject
 local PLAYER = FindMetaTable("Player")
 
+
+--[[
+    // DATABASE SETUP
+]]--
+
+--[[
+    @desc: Sets up the database strucutres, creating any needed tables.
+]]--
 function MySQLData:InitializeDatabase()
     if !self.CONN then 
         if MySQLData.Config.Debug then 
@@ -37,6 +49,9 @@ function MySQLData:InitializeDatabase()
     query:start()
 end
 
+--[[
+    @desc: Sets up the connection to the database
+]]--
 function MySQLData:ConnectDatabase()
     if self.CONN then 
         if MySQLData.Config.Debug then 
@@ -69,6 +84,18 @@ function MySQLData:ConnectDatabase()
     db:connect()
 end
 
+-- Connect to the database
+MySQLData:ConnectDatabase()
+
+--[[
+    // PLAYER CLASSES
+]]--
+
+--[[
+    @desc: Set a player's data under a unique identifier
+    @param: String strKey - The unique identifier
+    @param: String strData - The data to store
+]]--
 function PLAYER:SetData(strKey, strData)
     local strSave = string.format("%s [%s]", self:SteamID64(), string.lower(tostring(strKey)))
     local strNick = self:Nick()
@@ -114,6 +141,11 @@ function PLAYER:SetData(strKey, strData)
     end)
 end
 
+--[[
+    @desc: Get a player's data under a unique identifier
+    @param: String strKey - The unique identifier
+    @param: Function funcCallback - A function to run where the arguments are the returning data
+]]--
 function PLAYER:GetData(strKey, funcCallback)
     local strSave = string.format("%s [%s]", self:SteamID64(), string.lower(tostring(strKey)))
     local strNick = self:Nick()
@@ -142,5 +174,3 @@ function PLAYER:GetData(strKey, funcCallback)
 
     query:start()
 end
-
-MySQLData:ConnectDatabase()
